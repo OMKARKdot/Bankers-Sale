@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BLACKPEARL</title>
+    <title>Bank Auction Sales</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="login-screen">
+    <div class="login-bg">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">🏦</div>
+                <h2>National Bank Auction Portal</h2>
+                <p>Sign in to access auction listings</p>
+            </div>
+
+            <!-- Step 1: Choose method & enter email/phone -->
+            <div id="login-step1" class="login-step active-step">
+                <div class="login-tabs">
+                    <button class="login-tab active-tab" onclick="switchLoginTab('email')">📧 Email</button>
+                    <button class="login-tab" onclick="switchLoginTab('phone')">📱 Phone</button>
+                </div>
+
+                <div id="login-email-form" class="login-form">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="Enter your email address">
+                </div>
+
+                <div id="login-phone-form" class="login-form" style="display:none;">
+                    <label for="login-phone">Phone Number</label>
+                    <div class="phone-input-group">
+                        <span class="phone-prefix">+91</span>
+                        <input type="tel" id="login-phone" placeholder="Enter 10-digit mobile number" maxlength="10">
+                    </div>
+                </div>
+
+                <button class="login-btn" onclick="generateVirtualOTP()">Generate OTP & Sign In</button>
+                <p id="login-error" class="login-error"></p>
+            </div>
+
+            <!-- Step 2: Virtual OTP Display -->
+            <div id="login-step2" class="login-step">
+                <div class="otp-sent-info">
+                    <p>Virtual OTP for</p>
+                    <strong id="otp-sent-to"></strong>
+                </div>
+
+                <div class="virtual-otp-display">
+                    <h3>Your OTP</h3>
+                    <div class="virtual-otp-box" id="virtual-otp">123456</div>
+                    <p class="otp-note">Use this OTP to complete your login</p>
+                </div>
+
+                <button class="login-btn" onclick="verifyVirtualOTP()">Complete Sign In</button>
+                <p id="otp-error" class="login-error"></p>
+
+                <div class="otp-actions">
+                    <button class="resend-btn" onclick="generateVirtualOTP()">Generate New OTP</button>
+                    <button class="back-btn" onclick="showLoginStep(1)">← Change email/phone</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Profile Signup (New User) -->
+            <div id="login-step3" class="login-step">
+                <h3 class="profile-form-title">Create Your Profile</h3>
+                <p class="profile-form-sub">Fill in your details to get started</p>
+
+                <div class="login-form">
+                    <label for="signup-name">Full Name *</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name">
+                </div>
+                <div class="login-form">
+                    <label for="signup-dob">Date of Birth</label>
+                    <input type="date" id="signup-dob">
+                </div>
+                <div class="login-form">
+                    <label for="signup-gender">Gender</label>
+                    <select id="signup-gender">
+                        <option value="">-- Select --</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="login-form">
+                    <label for="signup-address">Address</label>
+                    <input type="text" id="signup-address" placeholder="House/Street address">
+                </div>
+                <div class="login-form profile-row">
+                    <div class="profile-half">
+                        <label for="signup-city">City *</label>
+                        <input type="text" id="signup-city" placeholder="Your city">
+                    </div>
+                    <div class="profile-half">
+                        <label for="signup-state">State *</label>
+                        <select id="signup-state">
+                            <option value="">-- Select --</option>
+                            <option>Andhra Pradesh</option>
+                            <option>Bihar</option>
+                            <option>Chandigarh</option>
+                            <option>Chhattisgarh</option>
+                            <option>Delhi</option>
+                            <option>Goa</option>
+                            <option>Gujarat</option>
+                            <option>Haryana</option>
+                            <option>Himachal Pradesh</option>
+                            <option>Jharkhand</option>
+                            <option>Karnataka</option>
+                            <option>Kerala</option>
+                            <option>Madhya Pradesh</option>
+                            <option>Maharashtra</option>
+                            <option>Odisha</option>
+                            <option>Punjab</option>
+                            <option>Rajasthan</option>
+                            <option>Tamil Nadu</option>
+                            <option>Telangana</option>
+                            <option>Uttar Pradesh</option>
+                            <option>Uttarakhand</option>
+                            <option>West Bengal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="login-form">
+                    <label for="signup-pincode">Pincode</label>
+                    <input type="text" id="signup-pincode" placeholder="6-digit pincode" maxlength="6">
+                </div>
+
+                <button class="login-btn" onclick="saveProfile()">Save & Continue</button>
+                <p id="signup-error" class="login-error"></p>
+            </div>
+
+            <!-- Step 4: Welcome (Existing User) -->
+            <div id="login-step4" class="login-step">
+                <div class="login-success">
+                    <div class="success-icon">✅</div>
+                    <h3>Welcome back, <span id="welcome-name"></span>!</h3>
+                    <p>You have signed in successfully.</p>
+                    <button class="login-btn" onclick="enterSite()">Continue to Portal</button>
+                </div>
+            </div>
+
+            <div class="login-footer">
+                <p>By signing in, you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN SITE (hidden until login) -->
+<div id="main-site" style="display:none;">
+
+<header>
+    <h1>National Bank Auction Portal</h1>
+    <p>Seized Properties & Vehicles at Best Prices</p>
+</header>
+
+<nav>
+    <a href="#" onclick="showHome()" class="nav-link active">Home</a>
+    <a href="#" onclick="showSection('search')" class="nav-link">Search</a>
+    <a href="#" onclick="showSection('properties')" class="nav-link">Properties</a>
+    <a href="#" onclick="showSection('vehicles')" class="nav-link">Vehicles</a>
+    <a href="#" onclick="showSection('about')" class="nav-link">About</a>
+    <a href="#" onclick="showSection('contact')" class="nav-link">Contact</a>
+    <a href="#" onclick="showSection('profile')" class="nav-link nav-profile-link" title="My Profile">
+        <span class="nav-profile-icon">👤</span>
+        <span class="nav-profile-name" id="nav-profile-name"></span>
+    </a>
+</nav>
+
+<!-- PROFILE MODAL -->
+<div id="profile-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeProfileModal()">
+    <div class="modal-content" style="max-width:500px;">
+        <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+        <div class="profile-modal-body">
+            <div class="profile-modal-header">
+                <div class="profile-avatar-large" id="profile-avatar-large">👤</div>
+                <h2 id="profile-modal-name"></h2>
+                <p class="profile-modal-since" id="profile-modal-since"></p>
+            </div>
+            <div class="profile-details">
+                <div class="profile-detail-row">
+                    <span class="profile-label">📧 Contact</span>
+                    <span class="profile-value" id="profile-contact"></span>
+                </div>
+                <div class="profile-detail-row">
+                    <span class="profile-label">🎂 Date of Birth</span>
+                    <span class="profile-value" id="profile-dob"></span>
+                </div>
+                <div class="profile-detail-row">
+                    <span class="profile-label">⚧ Gender</span>
+                    <span class="profile-value" id="profile-gender"></span>
+                </div>
+                <div class="profile-detail-row">
+                    <span class="profile-label">📍 Address</span>
+                    <span class="profile-value" id="profile-address"></span>
+                </div>
+                <div class="profile-detail-row">
+                    <span class="profile-label">🏙️ City</span>
+                    <span class="profile-value" id="profile-city"></span>
+                </div>
+                <div class="profile-detail-row">
+                    <span class="profile-label">🗺️ State</span>
+                    <span class="profile-value" id="profile-state"></span>
+                </div>
+                <div class="profile-detail-row">
+                    <span class="profile-label">📮 Pincode</span>
+                    <span class="profile-value" id="profile-pincode"></span>
+                </div>
+            </div>
+            <button class="login-btn" onclick="closeProfileModal(); openEditProfile();">✏️ Edit Profile</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div id="edit-profile-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeEditProfile()">
+    <div class="modal-content" style="max-width:480px;">
+        <button class="modal-close" onclick="closeEditProfile()">&times;</button>
+        <div class="profile-modal-body">
+            <h2 style="color:#0a3d62;margin:0 0 20px;text-align:center;">Edit Profile</h2>
+            <div class="login-form">
+                <label for="edit-name">Full Name *</label>
+                <input type="text" id="edit-name" placeholder="Full name">
+            </div>
+            <div class="login-form">
+                <label for="edit-dob">Date of Birth</label>
+                <input type="date" id="edit-dob">
+            </div>
+            <div class="login-form">
+                <label for="edit-gender">Gender</label>
+                <select id="edit-gender">
+                    <option value="">-- Select --</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="login-form">
+                <label for="edit-address">Address</label>
+                <input type="text" id="edit-address" placeholder="House/Street address">
+            </div>
+            <div class="login-form profile-row">
+                <div class="profile-half">
+                    <label for="edit-city">City *</label>
+                    <input type="text" id="edit-city" placeholder="Your city">
+                </div>
+                <div class="profile-half">
+                    <label for="edit-state">State *</label>
+                    <select id="edit-state">
+                        <option value="">-- Select --</option>
+                        <option>Andhra Pradesh</option><option>Bihar</option><option>Chandigarh</option>
+                        <option>Chhattisgarh</option><option>Delhi</option><option>Goa</option>
+                        <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+                        <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+                        <option>Madhya Pradesh</option><option>Maharashtra</option><option>Odisha</option>
+                        <option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option>
+                        <option>Telangana</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+                        <option>West Bengal</option>
+                    </select>
+                </div>
+            </div>
+            <div class="login-form">
+                <label for="edit-pincode">Pincode</label>
+                <input type="text" id="edit-pincode" placeholder="6-digit pincode" maxlength="6">
+            </div>
+            <button class="login-btn" onclick="updateProfile()">Save Changes</button>
+            <p id="edit-profile-error" class="login-error"></p>
+        </div>
+    </div>
+</div>
+
+<!-- HOME: Selection Page -->
+<section id="home-selection" class="page active-page">
+    <div class="selection-container">
+        <h2>What are you looking to buy?</h2>
+        <p class="selection-subtitle">Choose a category to explore bank auction deals</p>
+        <div class="selection-cards">
+            <div class="selection-card" onclick="showSection('properties')">
+                <div class="selection-icon">🏠</div>
+                <h3>Property</h3>
+                <p>Flats, Villas, Plots, Commercial Spaces</p>
+                <button>Explore Properties</button>
+            </div>
+            <div class="selection-card" onclick="showSection('vehicles')">
+                <div class="selection-icon">🚗</div>
+                <h3>Vehicle</h3>
+                <p>Cars, SUVs, Trucks, Two-Wheelers</p>
+                <button>Explore Vehicles</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SEARCH: Location-based Search -->
+<section id="search" class="page">
+    <div class="search-container">
+        <h2>Search by Location</h2>
+        <p class="search-subtitle">Select your city and what you're looking for</p>
+
+        <div class="search-form">
+            <div class="search-field">
+                <label for="search-location">Select Location</label>
+                <select id="search-location">
+                    <option value="">-- Choose a City --</option>
+                    <optgroup label="Maharashtra">
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Nagpur">Nagpur</option>
+                        <option value="Nashik">Nashik</option>
+                        <option value="Thane">Thane</option>
+                        <option value="Navi Mumbai">Navi Mumbai</option>
+                        <option value="Lonavala">Lonavala</option>
+                    </optgroup>
+                    <optgroup label="Karnataka">
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Mysuru">Mysuru</option>
+                    </optgroup>
+                    <optgroup label="Telangana">
+                        <option value="Hyderabad">Hyderabad</option>
+                    </optgroup>
+                    <optgroup label="Tamil Nadu">
+                        <option value="Chennai">Chennai</option>
+                        <option value="Coimbatore">Coimbatore</option>
+                    </optgroup>
+                    <optgroup label="Kerala">
+                        <option value="Kochi">Kochi</option>
+                        <option value="Trivandrum">Trivandrum</option>
+                    </optgroup>
+                    <optgroup label="Rajasthan">
+                        <option value="Jaipur">Jaipur</option>
+                    </optgroup>
+                    <optgroup label="Punjab / Chandigarh">
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Ludhiana">Ludhiana</option>
+                        <option value="Amritsar">Amritsar</option>
+                        <option value="Jalandhar">Jalandhar</option>
+                        <option value="Mohali">Mohali</option>
+                        <option value="Patiala">Patiala</option>
+                    </optgroup>
+                    <optgroup label="Delhi">
+                        <option value="Delhi">Delhi NCR</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="search-field">
+                <label for="search-category">Looking For</label>
+                <select id="search-category">
+                    <option value="all">Both Properties & Vehicles</option>
+                    <option value="property">Properties Only</option>
+                    <option value="vehicle">Vehicles Only</option>
+                </select>
+            </div>
+
+            <button class="search-btn" onclick="performSearch()">Search Auctions</button>
+        </div>
+    </div>
+
+    <div id="search-results" class="search-results" style="display:none;">
+        <div class="results-header">
+            <h2 id="results-title"></h2>
+            <p id="results-count"></p>
+        </div>
+
+        <div id="results-properties" style="display:none;">
+            <h3 class="results-category-title">🏠 Properties</h3>
+            <div id="results-properties-list" class="results-grid"></div>
+        </div>
+
+        <div id="results-vehicles" style="display:none;">
+            <h3 class="results-category-title">🚗 Vehicles</h3>
+            <div id="results-vehicles-list" class="results-grid"></div>
+        </div>
+
+        <div id="no-results" class="no-results" style="display:none;">
+            <div class="no-results-icon">🔍</div>
+            <h3>No listings found</h3>
+            <p>Try selecting a different location or category</p>
+        </div>
+    </div>
+</section>
+
+<!-- PROPERTIES: Banks & Their Products -->
+<section id="properties" class="page">
+    <h2 class="section-title">Bank Auction Properties</h2>
+    <p class="section-subtitle">Select a bank to view their auctioned properties (sorted by price: low to high)</p>
+
+    <div class="sort-bar">
+        <label>Sort by Price:</label>
+        <button class="sort-btn active-sort" onclick="sortProperties('asc', this)">Low to High</button>
+        <button class="sort-btn" onclick="sortProperties('desc', this)">High to Low</button>
+    </div>
+
+    <div class="bank-list">
+
+        <!-- SBI -->
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>State Bank of India (SBI)</h3>
+                <span class="bank-count">8 Properties</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products" data-sortable>
+                <div class="card" data-price="1800000">
+                    <img src="1 bhk houses.webp">
+                    <span class="card-type">Home</span>
+                    <h3>1 BHK Home</h3>
+                    <p>Location: Nagpur, Maharashtra</p>
+                    <p class="sqft">Area: 550 sq.ft</p>
+                    <p>Market Value: ₹28 Lakhs</p>
+                    <p class="price">Bank Price: ₹18 Lakhs</p>
+                    <p class="price-per-sqft">₹3,273 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="2500000">
+                    <img src="sbi 1.jpg">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Compact</h3>
+                    <p>Location: Nashik, Maharashtra</p>
+                    <p class="sqft">Area: 800 sq.ft</p>
+                    <p>Market Value: ₹38 Lakhs</p>
+                    <p class="price">Bank Price: ₹25 Lakhs</p>
+                    <p class="price-per-sqft">₹3,125 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="3000000">
+                    <img src="commercial shop.webp">
+                    <span class="card-type">Commercial</span>
+                    <h3>Commercial Shop</h3>
+                    <p>Location: Delhi NCR</p>
+                    <p class="sqft">Area: 450 sq.ft</p>
+                    <p>Market Value: ₹45 Lakhs</p>
+                    <p class="price">Bank Price: ₹30 Lakhs</p>
+                    <p class="price-per-sqft">₹6,667 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="4200000">
+                    <img src="row houses.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Premium</h3>
+                    <p>Location: Pune, Maharashtra</p>
+                    <p class="sqft">Area: 1,200 sq.ft</p>
+                    <p>Market Value: ₹65 Lakhs</p>
+                    <p class="price">Bank Price: ₹42 Lakhs</p>
+                    <p class="price-per-sqft">₹3,500 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="5800000">
+                    <img src="3 bhk home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>3 BHK Home</h3>
+                    <p>Location: Thane, Maharashtra</p>
+                    <p class="sqft">Area: 1,400 sq.ft</p>
+                    <p>Market Value: ₹85 Lakhs</p>
+                    <p class="price">Bank Price: ₹58 Lakhs</p>
+                    <p class="price-per-sqft">₹4,143 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="7500000">
+                    <img src="bunglow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Semi-Furnished Bungalow</h3>
+                    <p>Location: Lonavala, Maharashtra</p>
+                    <p class="sqft">Area: 2,200 sq.ft</p>
+                    <p>Market Value: ₹1.1 Cr</p>
+                    <p class="price">Bank Price: ₹75 Lakhs</p>
+                    <p class="price-per-sqft">₹3,409 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="9200000">
+                    <img src="luxury bunglow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Luxury Bungalow</h3>
+                    <p>Location: Mumbai, Maharashtra</p>
+                    <p class="sqft">Area: 3,500 sq.ft</p>
+                    <p>Market Value: ₹1.5 Cr</p>
+                    <p class="price">Bank Price: ₹92 Lakhs</p>
+                    <p class="price-per-sqft">₹2,629 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="12500000">
+                    <img src="duplex row houses.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Duplex Row House</h3>
+                    <p>Location: Navi Mumbai, Maharashtra</p>
+                    <p class="sqft">Area: 2,800 sq.ft</p>
+                    <p>Market Value: ₹1.8 Cr</p>
+                    <p class="price">Bank Price: ₹1.25 Cr</p>
+                    <p class="price-per-sqft">₹4,464 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HDFC -->
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>HDFC Bank</h3>
+                <span class="bank-count">8 Properties</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products" data-sortable>
+                <div class="card" data-price="2200000">
+                    <img src="1 bhk houses.webp">
+                    <span class="card-type">Home</span>
+                    <h3>1 BHK Home</h3>
+                    <p>Location: Whitefield, Bangalore</p>
+                    <p class="sqft">Area: 600 sq.ft</p>
+                    <p>Market Value: ₹35 Lakhs</p>
+                    <p class="price">Bank Price: ₹22 Lakhs</p>
+                    <p class="price-per-sqft">₹3,667 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="3200000">
+                    <img src="row houses standard.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Standard</h3>
+                    <p>Location: Electronic City, Bangalore</p>
+                    <p class="sqft">Area: 950 sq.ft</p>
+                    <p>Market Value: ₹48 Lakhs</p>
+                    <p class="price">Bank Price: ₹32 Lakhs</p>
+                    <p class="price-per-sqft">₹3,368 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="3800000">
+                    <img src="residential plots.webp">
+                    <span class="card-type">Plot</span>
+                    <h3>Residential Plot</h3>
+                    <p>Location: Hyderabad, Telangana</p>
+                    <p class="sqft">Area: 1,500 sq.ft</p>
+                    <p>Market Value: ₹60 Lakhs</p>
+                    <p class="price">Bank Price: ₹38 Lakhs</p>
+                    <p class="price-per-sqft">₹2,533 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="5500000">
+                    <img src="2 bhk  home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>2 BHK Home</h3>
+                    <p>Location: Koramangala, Bangalore</p>
+                    <p class="sqft">Area: 1,100 sq.ft</p>
+                    <p>Market Value: ₹80 Lakhs</p>
+                    <p class="price">Bank Price: ₹55 Lakhs</p>
+                    <p class="price-per-sqft">₹5,000 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="7800000">
+                    <img src="garden bunglow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Garden Bungalow</h3>
+                    <p>Location: Mysuru, Karnataka</p>
+                    <p class="sqft">Area: 2,600 sq.ft</p>
+                    <p>Market Value: ₹1.2 Cr</p>
+                    <p class="price">Bank Price: ₹78 Lakhs</p>
+                    <p class="price-per-sqft">₹3,000 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="9500000">
+                    <img src="row house villa.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House Villa</h3>
+                    <p>Location: Sarjapur Road, Bangalore</p>
+                    <p class="sqft">Area: 1,800 sq.ft</p>
+                    <p>Market Value: ₹1.4 Cr</p>
+                    <p class="price">Bank Price: ₹95 Lakhs</p>
+                    <p class="price-per-sqft">₹5,278 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="14000000">
+                    <img src="penthouse home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>Penthouse</h3>
+                    <p>Location: Indiranagar, Bangalore</p>
+                    <p class="sqft">Area: 3,200 sq.ft</p>
+                    <p>Market Value: ₹2.2 Cr</p>
+                    <p class="price">Bank Price: ₹1.4 Cr</p>
+                    <p class="price-per-sqft">₹4,375 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="18000000">
+                    <img src="luxury bunglow with pool.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Luxury Bungalow with Pool</h3>
+                    <p>Location: Jubilee Hills, Hyderabad</p>
+                    <p class="sqft">Area: 4,500 sq.ft</p>
+                    <p>Market Value: ₹2.8 Cr</p>
+                    <p class="price">Bank Price: ₹1.8 Cr</p>
+                    <p class="price-per-sqft">₹4,000 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ICICI -->
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>ICICI Bank</h3>
+                <span class="bank-count">8 Properties</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products" data-sortable>
+                <div class="card" data-price="1500000">
+                    <img src="sbi 1.jpg">
+                    <span class="card-type">Home</span>
+                    <h3>1 RK Home</h3>
+                    <p>Location: Ambattur, Chennai</p>
+                    <p class="sqft">Area: 400 sq.ft</p>
+                    <p>Market Value: ₹22 Lakhs</p>
+                    <p class="price">Bank Price: ₹15 Lakhs</p>
+                    <p class="price-per-sqft">₹3,750 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="2800000">
+                    <img src="row houses.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Economy</h3>
+                    <p>Location: Coimbatore, Tamil Nadu</p>
+                    <p class="sqft">Area: 900 sq.ft</p>
+                    <p>Market Value: ₹42 Lakhs</p>
+                    <p class="price">Bank Price: ₹28 Lakhs</p>
+                    <p class="price-per-sqft">₹3,111 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="3500000">
+                    <img src="2 bhk  home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>2 BHK Home</h3>
+                    <p>Location: OMR, Chennai</p>
+                    <p class="sqft">Area: 1,050 sq.ft</p>
+                    <p>Market Value: ₹55 Lakhs</p>
+                    <p class="price">Bank Price: ₹35 Lakhs</p>
+                    <p class="price-per-sqft">₹3,333 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="5200000">
+                    <img src="row houses.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Deluxe</h3>
+                    <p>Location: Trivandrum, Kerala</p>
+                    <p class="sqft">Area: 1,350 sq.ft</p>
+                    <p>Market Value: ₹78 Lakhs</p>
+                    <p class="price">Bank Price: ₹52 Lakhs</p>
+                    <p class="price-per-sqft">₹3,852 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="6800000">
+                    <img src="corner bunglow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Corner Bungalow</h3>
+                    <p>Location: Kochi, Kerala</p>
+                    <p class="sqft">Area: 2,000 sq.ft</p>
+                    <p>Market Value: ₹1.0 Cr</p>
+                    <p class="price">Bank Price: ₹68 Lakhs</p>
+                    <p class="price-per-sqft">₹3,400 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="8500000">
+                    <img src="3 bhk premium home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>3 BHK Premium Home</h3>
+                    <p>Location: Anna Nagar, Chennai</p>
+                    <p class="sqft">Area: 1,800 sq.ft</p>
+                    <p>Market Value: ₹1.3 Cr</p>
+                    <p class="price">Bank Price: ₹85 Lakhs</p>
+                    <p class="price-per-sqft">₹4,722 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="11000000">
+                    <img src="farm bunglow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Farmhouse Bungalow</h3>
+                    <p>Location: Jaipur, Rajasthan</p>
+                    <p class="sqft">Area: 4,000 sq.ft</p>
+                    <p>Market Value: ₹1.8 Cr</p>
+                    <p class="price">Bank Price: ₹1.1 Cr</p>
+                    <p class="price-per-sqft">₹2,750 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="16000000">
+                    <img src="luxury bunglow.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Luxury Row House</h3>
+                    <p>Location: ECR, Chennai</p>
+                    <p class="sqft">Area: 3,000 sq.ft</p>
+                    <p>Market Value: ₹2.5 Cr</p>
+                    <p class="price">Bank Price: ₹1.6 Cr</p>
+                    <p class="price-per-sqft">₹5,333 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PNB -->
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>Punjab National Bank (PNB)</h3>
+                <span class="bank-count">8 Properties</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products" data-sortable>
+                <div class="card" data-price="1200000">
+                    <img src="1 rk home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>1 RK Home</h3>
+                    <p>Location: Amritsar, Punjab</p>
+                    <p class="sqft">Area: 350 sq.ft</p>
+                    <p>Market Value: ₹18 Lakhs</p>
+                    <p class="price">Bank Price: ₹12 Lakhs</p>
+                    <p class="price-per-sqft">₹3,429 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="2000000">
+                    <img src="row houses.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Basic</h3>
+                    <p>Location: Jalandhar, Punjab</p>
+                    <p class="sqft">Area: 750 sq.ft</p>
+                    <p>Market Value: ₹30 Lakhs</p>
+                    <p class="price">Bank Price: ₹20 Lakhs</p>
+                    <p class="price-per-sqft">₹2,667 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="3500000">
+                    <img src="2 bhk  home.webp">
+                    <span class="card-type">Home</span>
+                    <h3>2 BHK Home</h3>
+                    <p>Location: Patiala, Punjab</p>
+                    <p class="sqft">Area: 1,000 sq.ft</p>
+                    <p>Market Value: ₹52 Lakhs</p>
+                    <p class="price">Bank Price: ₹35 Lakhs</p>
+                    <p class="price-per-sqft">₹3,500 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="4800000">
+                    <img src="row houses.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Row House - Modern</h3>
+                    <p>Location: Mohali, Punjab</p>
+                    <p class="sqft">Area: 1,300 sq.ft</p>
+                    <p>Market Value: ₹72 Lakhs</p>
+                    <p class="price">Bank Price: ₹48 Lakhs</p>
+                    <p class="price-per-sqft">₹3,692 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="6200000">
+                    <img src="4 bhk independent house.webp">
+                    <span class="card-type">Home</span>
+                    <h3>4 BHK Independent Home</h3>
+                    <p>Location: Chandigarh</p>
+                    <p class="sqft">Area: 1,800 sq.ft</p>
+                    <p>Market Value: ₹95 Lakhs</p>
+                    <p class="price">Bank Price: ₹62 Lakhs</p>
+                    <p class="price-per-sqft">₹3,444 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="7500000">
+                    <img src="Double Story Bungalow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Double Story Bungalow</h3>
+                    <p>Location: Ludhiana, Punjab</p>
+                    <p class="sqft">Area: 2,400 sq.ft</p>
+                    <p>Market Value: ₹1.2 Cr</p>
+                    <p class="price">Bank Price: ₹75 Lakhs</p>
+                    <p class="price-per-sqft">₹3,125 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="10000000">
+                    <img src="3 bhk premium home.webp">
+                    <span class="card-type">Row House</span>
+                    <h3>Premium Row House</h3>
+                    <p>Location: Sector 17, Chandigarh</p>
+                    <p class="sqft">Area: 2,200 sq.ft</p>
+                    <p>Market Value: ₹1.5 Cr</p>
+                    <p class="price">Bank Price: ₹1.0 Cr</p>
+                    <p class="price-per-sqft">₹4,545 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card" data-price="15000000">
+                    <img src="heritage buglow.webp">
+                    <span class="card-type">Bungalow</span>
+                    <h3>Heritage Bungalow</h3>
+                    <p>Location: Civil Lines, Chandigarh</p>
+                    <p class="sqft">Area: 5,000 sq.ft</p>
+                    <p>Market Value: ₹2.4 Cr</p>
+                    <p class="price">Bank Price: ₹1.5 Cr</p>
+                    <p class="price-per-sqft">₹3,000 / sq.ft</p>
+                    <button>Bid Now</button>
+                </div> 
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- VEHICLES: Banks & Their Products -->
+<section id="vehicles" class="page">
+    <h2 class="section-title">Bank Auction Vehicles</h2>
+    <p class="section-subtitle">Select a bank to view their auctioned vehicles</p>
+
+    <div class="bank-list">
+
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>State Bank of India (SBI)</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products">
+                <div class="card">
+                    <img src="bmw x5.webp">
+                    <h3>BMW X5</h3>
+                    <p>Location: Mumbai, Maharashtra</p>
+                    <p>Model: 2021 | KMs: 18,000</p>
+                    <p>Market Value: ₹72 Lakhs</p>
+                    <p class="price">Bank Price: ₹45 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="fortuner.webp">
+                    <h3>Toyota Fortuner</h3>
+                    <p>Location: Pune, Maharashtra</p>
+                    <p>Model: 2022 | KMs: 12,000</p>
+                    <p>Market Value: ₹42 Lakhs</p>
+                    <p class="price">Bank Price: ₹28 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="swift.webp">
+                    <h3>Maruti Swift</h3>
+                    <p>Location: Nagpur, Maharashtra</p>
+                    <p>Model: 2022 | KMs: 10,000</p>
+                    <p>Market Value: ₹9 Lakhs</p>
+                    <p class="price">Bank Price: ₹6.5 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>HDFC Bank</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products">
+                <div class="card">
+                    <img src="audi.webp">
+                    <h3>Audi A6</h3>
+                    <p>Location: Bangalore, Karnataka</p>
+                    <p>Model: 2020 | KMs: 25,000</p>
+                    <p>Market Value: ₹55 Lakhs</p>
+                    <p class="price">Bank Price: ₹34 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="creta.webp">
+                    <h3>Hyundai Creta</h3>
+                    <p>Location: Hyderabad, Telangana</p>
+                    <p>Model: 2023 | KMs: 8,000</p>
+                    <p>Market Value: ₹18 Lakhs</p>
+                    <p class="price">Bank Price: ₹12.5 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="honda.webp">
+                    <h3>Honda City</h3>
+                    <p>Location: Mysuru, Karnataka</p>
+                    <p>Model: 2021 | KMs: 22,000</p>
+                    <p>Market Value: ₹14 Lakhs</p>
+                    <p class="price">Bank Price: ₹9.5 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>ICICI Bank</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products">
+                <div class="card">
+                    <img src="mercedes.webp">
+                    <h3>Mercedes GLC</h3>
+                    <p>Location: Chennai, Tamil Nadu</p>
+                    <p>Model: 2021 | KMs: 20,000</p>
+                    <p>Market Value: ₹65 Lakhs</p>
+                    <p class="price">Bank Price: ₹40 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="tata.webp">
+                    <h3>Tata Harrier</h3>
+                    <p>Location: Kochi, Kerala</p>
+                    <p>Model: 2022 | KMs: 15,000</p>
+                    <p>Market Value: ₹20 Lakhs</p>
+                    <p class="price">Bank Price: ₹13 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="kia.webp">
+                    <h3>Kia Seltos</h3>
+                    <p>Location: Coimbatore, Tamil Nadu</p>
+                    <p>Model: 2023 | KMs: 6,000</p>
+                    <p>Market Value: ₹17 Lakhs</p>
+                    <p class="price">Bank Price: ₹12 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bank-group">
+            <div class="bank-header" onclick="toggleBank(this)">
+                <span class="bank-logo">🏦</span>
+                <h3>Punjab National Bank (PNB)</h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="bank-products">
+                <div class="card">
+                    <img src="thar.webp">
+                    <h3>Mahindra Thar</h3>
+                    <p>Location: Chandigarh</p>
+                    <p>Model: 2023 | KMs: 5,000</p>
+                    <p>Market Value: ₹16 Lakhs</p>
+                    <p class="price">Bank Price: ₹11 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="truck.webp">
+                    <h3>Ashok Leyland Truck</h3>
+                    <p>Location: Ludhiana, Punjab</p>
+                    <p>Model: 2020 | KMs: 60,000</p>
+                    <p>Market Value: ₹22 Lakhs</p>
+                    <p class="price">Bank Price: ₹14 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+                <div class="card">
+                    <img src="nexon.webp">
+                    <h3>Tata Nexon EV</h3>
+                    <p>Location: Amritsar, Punjab</p>
+                    <p>Model: 2023 | KMs: 4,000</p>
+                    <p>Market Value: ₹15 Lakhs</p>
+                    <p class="price">Bank Price: ₹10.5 Lakhs</p>
+                    <button>Bid Now</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- PROFILE PAGE -->
+<section id="profile" class="page">
+    <div class="profile-page">
+        <div class="profile-page-card">
+            <div class="profile-page-header">
+                <div class="profile-page-avatar">👤</div>
+                <h2 id="profile-page-name">User</h2>
+                <p class="profile-page-since" id="profile-page-since">Member since --</p>
+                <p class="profile-page-contact" id="profile-page-contact"></p>
+            </div>
+
+            <div class="profile-page-details">
+                <div class="profile-page-row">
+                    <span class="profile-page-label">🎂 Date of Birth</span>
+                    <span class="profile-page-value" id="pp-dob">Not set</span>
+                </div>
+                <div class="profile-page-row">
+                    <span class="profile-page-label">⚧ Gender</span>
+                    <span class="profile-page-value" id="pp-gender">Not set</span>
+                </div>
+                <div class="profile-page-row">
+                    <span class="profile-page-label">📍 Address</span>
+                    <span class="profile-page-value" id="pp-address">Not set</span>
+                </div>
+                <div class="profile-page-row">
+                    <span class="profile-page-label">🏙️ City</span>
+                    <span class="profile-page-value" id="pp-city">--</span>
+                </div>
+                <div class="profile-page-row">
+                    <span class="profile-page-label">🗺️ State</span>
+                    <span class="profile-page-value" id="pp-state">--</span>
+                </div>
+                <div class="profile-page-row">
+                    <span class="profile-page-label">📮 Pincode</span>
+                    <span class="profile-page-value" id="pp-pincode">Not set</span>
+                </div>
+            </div>
+
+            <div class="profile-page-actions">
+                <button class="profile-edit-btn" onclick="openEditProfile()">✏️ Edit Profile</button>
+                <button class="profile-logout-btn" onclick="logOut()">🚪 Sign Out</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="page">
+    <div class="about-container">
+        <h2 class="section-title">About Us</h2>
+        <p>National Bank Auction Portal is India's trusted platform for purchasing bank-seized properties and vehicles at discounted prices. All listings are verified by banks with full legal clearance.</p>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="page">
+    <div class="about-container">
+        <h2 class="section-title">Contact Us</h2>
+        <p>Email: info@bankauction.in</p>
+        <p>Phone: +91 98765 43210</p>
+        <p>Address: 101 Finance Tower, Mumbai, India</p>
+    </div>
+</section>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeDetail()">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeDetail()">&times;</button>
+        <div class="modal-body">
+            <div class="modal-gallery">
+                <div class="gallery-main">
+                    <img id="modal-main-img" src="" alt="">
+                    <button class="gallery-arrow gallery-prev" onclick="changeImage(-1)">&#10094;</button>
+                    <button class="gallery-arrow gallery-next" onclick="changeImage(1)">&#10095;</button>
+                    <span class="gallery-counter" id="gallery-counter">1 / 5</span>
+                </div>
+                <div class="gallery-thumbs" id="gallery-thumbs"></div>
+            </div>
+            <div class="modal-info">
+                <span class="modal-type" id="modal-type"></span>
+                <h2 id="modal-title"></h2>
+                <p class="modal-address" id="modal-address"></p>
+                <div class="modal-price-box">
+                    <div class="modal-market-val">
+                        <span>Market Value</span>
+                        <strong id="modal-market"></strong>
+                    </div>
+                    <div class="modal-bank-price">
+                        <span>Bank Auction Price</span>
+                        <strong id="modal-bankprice"></strong>
+                    </div>
+                </div>
+                <div class="modal-specs" id="modal-specs"></div>
+                <div class="modal-highlights">
+                    <h3>Highlights</h3>
+                    <ul id="modal-highlights-list"></ul>
+                </div>
+                <div class="modal-bank-info">
+                    <h3>Bank &amp; Listing Details</h3>
+                    <table>
+                        <tr><td>Bank</td><td id="modal-bank"></td></tr>
+                        <tr><td>Auction ID</td><td id="modal-auction-id"></td></tr>
+                        <tr><td>Listed On</td><td id="modal-listed"></td></tr>
+                        <tr><td>Status</td><td><span class="status-active">Active</span></td></tr>
+                    </table>
+                </div>
+                <button class="modal-bid-btn" onclick="alert('Your bid has been registered! The bank will contact you shortly.')">Place Bid</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2026 BLACK PEARL PVT LTD. All rights reserved.</p>
+</footer>
+
+</div><!-- end #main-site -->
+
+<script>
+var currentImages = [];
+var currentImgIndex = 0;
+
+var propHighlights = [
+    ["Gated Community","Near Metro Station","24x7 Security","Parking Available","Vastu Compliant"],
+    ["Garden Area","Power Backup","Modular Kitchen","CCTV Surveillance","Lift Available"],
+    ["Swimming Pool","Club House","Marble Flooring","Rain Water Harvesting","Children Play Area"],
+    ["Near School & Hospital","Covered Parking","Intercom Facility","Fire Safety System","Gym & Fitness Centre"],
+    ["Corner Property","Wide Road Facing","East Facing","Near IT Hub","Fully Furnished"],
+    ["Terrace Garden","Servant Quarter","Italian Marble","Home Theatre","Solar Panels"],
+    ["Wooden Flooring","French Windows","Walk-in Closet","Smart Home Ready","Near Expressway"],
+    ["Rooftop Access","Landscaped Garden","Double Height Ceiling","Imported Fittings","Near Airport"]
+];
+
+var vehHighlights = [
+    ["Single Owner","Full Insurance","Service History Available","No Accident Record","New Tyres"],
+    ["Company Maintained","Sunroof","Automatic Transmission","Low Mileage","Certified Pre-Owned"],
+    ["Alloy Wheels","Leather Seats","Rear Camera","Touch Screen","Bluetooth Connectivity"],
+    ["First Owner","Warranty Available","Roadside Assistance","Recently Serviced","Premium Audio System"],
+    ["Cruise Control","Hill Assist","All-Wheel Drive","Turbo Engine","Keyless Entry"],
+    ["Climate Control","Parking Sensors","LED Headlights","Tinted Glass","Anti-Lock Brakes"],
+    ["Airbags","GPS Navigation","Rain Sensing Wipers","Power Steering","Electric Mirrors"]
+];
+
+var propImgViews = ["Front+View","Living+Room","Kitchen","Bedroom","Balcony+View"];
+var vehImgViews = ["Front+View","Interior","Dashboard","Engine","Side+View"];
+
+var bankCodes = {"State Bank of India (SBI)":"SBI","HDFC Bank":"HDFC","ICICI Bank":"ICICI","Punjab National Bank (PNB)":"PNB"};
+var bankColors = {"SBI":"0a3d62","HDFC":"1e3799","ICICI":"38ada9","PNB":"6a0572"};
+
+var listDates = ["15 Oct 2025","02 Nov 2025","18 Dec 2025","05 Jan 2026","22 Jan 2026","10 Feb 2026","28 Nov 2025","14 Sep 2025"];
+
+function initCards() {
+    var propIdx = 0;
+    document.querySelectorAll('#properties .bank-group').forEach(function(group) {
+        var bankName = group.querySelector('.bank-header h3').textContent;
+        var code = bankCodes[bankName] || "BANK";
+        var color = bankColors[code] || "333333";
+        group.querySelectorAll('.card').forEach(function(card, i) {
+            var title = card.querySelector('h3').textContent;
+            var shortTitle = title.replace(/\s+/g, '+');
+            var imgs = propImgViews.map(function(v){ return "https://placehold.co/600x400/"+color+"/white?text="+shortTitle+"+"+v; });
+            card.setAttribute('data-images', imgs.join('|'));
+            card.setAttribute('data-bank', bankName);
+            card.setAttribute('data-auction-id', 'AUC-'+code+'-2025-'+ String(propIdx+1).padStart(3,'0'));
+            card.setAttribute('data-listed', listDates[i % listDates.length]);
+            card.setAttribute('data-highlights', propHighlights[propIdx % propHighlights.length].join('|'));
+            card.setAttribute('data-category', 'property');
+            card.setAttribute('onclick', 'openDetail(this)');
+            var btn = card.querySelector('button');
+            btn.setAttribute('onclick', 'event.stopPropagation(); openDetail(this.closest(".card"))');
+            propIdx++;
+        });
+    });
+
+    var vehIdx = 0;
+    document.querySelectorAll('#vehicles .bank-group').forEach(function(group) {
+        var bankName = group.querySelector('.bank-header h3').textContent;
+        var code = bankCodes[bankName] || "BANK";
+        var color = bankColors[code] || "333333";
+        group.querySelectorAll('.card').forEach(function(card, i) {
+            var title = card.querySelector('h3').textContent;
+            var shortTitle = title.replace(/\s+/g, '+');
+            var imgs = vehImgViews.map(function(v){ return "https://placehold.co/600x400/"+color+"/white?text="+shortTitle+"+"+v; });
+            card.setAttribute('data-images', imgs.join('|'));
+            card.setAttribute('data-bank', bankName);
+            card.setAttribute('data-auction-id', 'AUC-'+code+'-2026-V'+ String(vehIdx+1).padStart(3,'0'));
+            card.setAttribute('data-listed', listDates[(i+3) % listDates.length]);
+            card.setAttribute('data-highlights', vehHighlights[vehIdx % vehHighlights.length].join('|'));
+            card.setAttribute('data-category', 'vehicle');
+            card.setAttribute('onclick', 'openDetail(this)');
+            var btn = card.querySelector('button');
+            btn.setAttribute('onclick', 'event.stopPropagation(); openDetail(this.closest(".card"))');
+            vehIdx++;
+        });
+    });
+}
+
+function openDetail(card) {
+    var title = card.querySelector('h3').textContent;
+    var typeEl = card.querySelector('.card-type');
+    var type = typeEl ? typeEl.textContent : '';
+    var ps = card.querySelectorAll('p');
+    var address = '', market = '', bankPrice = '', sqft = '', ppsqft = '', model = '';
+    ps.forEach(function(p) {
+        var t = p.textContent;
+        if (t.startsWith('Location:')) address = t.replace('Location: ','');
+        if (t.startsWith('Market Value:')) market = t.replace('Market Value: ','');
+        if (t.startsWith('Bank Price:') || p.classList.contains('price')) bankPrice = t.replace('Bank Price: ','');
+        if (t.startsWith('Area:') || p.classList.contains('sqft')) sqft = t;
+        if (p.classList.contains('price-per-sqft')) ppsqft = t;
+        if (t.startsWith('Model:')) model = t;
+    });
+
+    currentImages = (card.getAttribute('data-images') || '').split('|');
+    currentImgIndex = 0;
+
+    document.getElementById('modal-main-img').src = currentImages[0];
+    document.getElementById('gallery-counter').textContent = '1 / ' + currentImages.length;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-type').textContent = type;
+    document.getElementById('modal-address').innerHTML = '📍 ' + address;
+    document.getElementById('modal-market').textContent = market;
+    document.getElementById('modal-bankprice').textContent = bankPrice;
+    document.getElementById('modal-bank').textContent = card.getAttribute('data-bank') || '';
+    document.getElementById('modal-auction-id').textContent = card.getAttribute('data-auction-id') || '';
+    document.getElementById('modal-listed').textContent = card.getAttribute('data-listed') || '';
+
+    var specs = '';
+    if (sqft) specs += '<span>📐 ' + sqft + '</span>';
+    if (ppsqft) specs += '<span>💰 ' + ppsqft + '</span>';
+    if (model) specs += '<span>🚗 ' + model + '</span>';
+    document.getElementById('modal-specs').innerHTML = specs;
+
+    var highlights = (card.getAttribute('data-highlights') || '').split('|');
+    var hlList = document.getElementById('modal-highlights-list');
+    hlList.innerHTML = '';
+    highlights.forEach(function(h) {
+        if (h) { var li = document.createElement('li'); li.textContent = h; hlList.appendChild(li); }
+    });
+
+    var thumbsDiv = document.getElementById('gallery-thumbs');
+    thumbsDiv.innerHTML = '';
+    currentImages.forEach(function(src, idx) {
+        var img = document.createElement('img');
+        img.src = src;
+        img.className = idx === 0 ? 'thumb active-thumb' : 'thumb';
+        img.onclick = function() { goToImage(idx); };
+        thumbsDiv.appendChild(img);
+    });
+
+    document.getElementById('detail-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+    document.getElementById('detail-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function changeImage(dir) {
+    goToImage(currentImgIndex + dir);
+}
+
+function goToImage(idx) {
+    if (idx < 0) idx = currentImages.length - 1;
+    if (idx >= currentImages.length) idx = 0;
+    currentImgIndex = idx;
+    document.getElementById('modal-main-img').src = currentImages[idx];
+    document.getElementById('gallery-counter').textContent = (idx+1) + ' / ' + currentImages.length;
+    document.querySelectorAll('#gallery-thumbs .thumb').forEach(function(t, i) {
+        t.className = i === idx ? 'thumb active-thumb' : 'thumb';
+    });
+}
+
+document.addEventListener('keydown', function(e) {
+    if (document.getElementById('detail-modal').style.display === 'flex') {
+        if (e.key === 'Escape') closeDetail();
+        if (e.key === 'ArrowLeft') changeImage(-1);
+        if (e.key === 'ArrowRight') changeImage(1);
+    }
+});
+
+function showHome() {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active-page'); });
+    document.getElementById('home-selection').classList.add('active-page');
+    setActiveNav(0);
+}
+
+function showSection(id) {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active-page'); });
+    document.getElementById(id).classList.add('active-page');
+    if (id === 'profile') loadProfilePage();
+    var navMap = { 'search': 1, 'properties': 2, 'vehicles': 3, 'about': 4, 'contact': 5, 'profile': 6 };
+    setActiveNav(navMap[id] || 0);
+}
+
+function setActiveNav(index) {
+    document.querySelectorAll('.nav-link').forEach(function(a, i) {
+        a.classList.toggle('active', i === index);
+    });
+}
+
+function toggleBank(header) {
+    var group = header.parentElement;
+    group.classList.toggle('open');
+}
+
+function performSearch() {
+    var location = document.getElementById('search-location').value;
+    var category = document.getElementById('search-category').value;
+    if (!location) { alert('Please select a location first.'); return; }
+
+    var resultsDiv = document.getElementById('search-results');
+    var propsSection = document.getElementById('results-properties');
+    var vehSection = document.getElementById('results-vehicles');
+    var propsList = document.getElementById('results-properties-list');
+    var vehList = document.getElementById('results-vehicles-list');
+    var noResults = document.getElementById('no-results');
+    propsList.innerHTML = '';
+    vehList.innerHTML = '';
+    propsSection.style.display = 'none';
+    vehSection.style.display = 'none';
+    noResults.style.display = 'none';
+    var propCount = 0, vehCount = 0;
+
+    if (category === 'all' || category === 'property') {
+        document.querySelectorAll('#properties .card').forEach(function(card) {
+            var loc = card.querySelector('p');
+            if (loc && loc.textContent.toLowerCase().includes(location.toLowerCase())) {
+                var clone = card.cloneNode(true);
+                var bankName = card.closest('.bank-group').querySelector('.bank-header h3').textContent;
+                var bankTag = document.createElement('p');
+                bankTag.className = 'result-bank-tag';
+                bankTag.textContent = bankName;
+                clone.insertBefore(bankTag, clone.querySelector('h3'));
+                var btn = clone.querySelector('button');
+                if (btn) btn.setAttribute('onclick', 'openDetail(this.closest(".card"))');
+                propsList.appendChild(clone);
+                propCount++;
+            }
+        });
+        if (propCount > 0) propsSection.style.display = 'block';
+    }
+
+    if (category === 'all' || category === 'vehicle') {
+        document.querySelectorAll('#vehicles .card').forEach(function(card) {
+            var loc = card.querySelector('p');
+            if (loc && loc.textContent.toLowerCase().includes(location.toLowerCase())) {
+                var clone = card.cloneNode(true);
+                var bankName = card.closest('.bank-group').querySelector('.bank-header h3').textContent;
+                var bankTag = document.createElement('p');
+                bankTag.className = 'result-bank-tag';
+                bankTag.textContent = bankName;
+                clone.insertBefore(bankTag, clone.querySelector('h3'));
+                var btn = clone.querySelector('button');
+                if (btn) btn.setAttribute('onclick', 'openDetail(this.closest(".card"))');
+                vehList.appendChild(clone);
+                vehCount++;
+            }
+        });
+        if (vehCount > 0) vehSection.style.display = 'block';
+    }
+
+    var total = propCount + vehCount;
+    document.getElementById('results-title').textContent = 'Results for ' + location;
+    document.getElementById('results-count').textContent = total + ' listing' + (total !== 1 ? 's' : '') + ' found';
+    if (total === 0) noResults.style.display = 'block';
+    resultsDiv.style.display = 'block';
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+function sortProperties(order, btn) {
+    document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active-sort'); });
+    btn.classList.add('active-sort');
+    document.querySelectorAll('[data-sortable]').forEach(function(container) {
+        var cards = Array.from(container.querySelectorAll('.card[data-price]'));
+        cards.sort(function(a, b) {
+            var pa = parseInt(a.dataset.price), pb = parseInt(b.dataset.price);
+            return order === 'asc' ? pa - pb : pb - pa;
+        });
+        cards.forEach(function(card){ container.appendChild(card); });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initCards();
+    checkSession();
+    initMobileFeatures();
+});
+
+/* ========== MOBILE-SPECIFIC FEATURES ========== */
+function initMobileFeatures() {
+    // Add viewport meta tag for mobile optimization if not present
+    if (!document.querySelector('meta[name="viewport"]')) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+        document.head.appendChild(meta);
+    }
+    
+    // Add touch-friendly enhancements
+    addTouchSupport();
+    
+    // Add mobile navigation toggle
+    addMobileNavigation();
+    
+    // Add pull-to-refresh simulation for search results
+    addPullToRefresh();
+    
+    // Add swipe gestures for image gallery
+    addSwipeGestures();
+    
+    // Add mobile keyboard handling
+    addKeyboardHandling();
+}
+
+function addTouchSupport() {
+    // Add touch ripple effect for buttons
+    document.querySelectorAll('button, .card, .selection-card, .bank-header').forEach(function(el) {
+        el.addEventListener('touchstart', function(e) {
+            if (!this.classList.contains('no-ripple')) {
+                var ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = (e.changedTouches[0].clientX - this.offsetLeft) + 'px';
+                ripple.style.top = (e.changedTouches[0].clientY - this.offsetTop) + 'px';
+                this.appendChild(ripple);
+                setTimeout(function() { ripple.remove(); }, 600);
+            }
+        }, { passive: true });
+    });
+    
+    // Add CSS for ripple effect
+    var style = document.createElement('style');
+    style.textContent = `
+        button, .card, .selection-card, .bank-header {
+            position: relative;
+            overflow: hidden;
+        }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function addMobileNavigation() {
+    // Create mobile menu toggle button
+    var nav = document.querySelector('nav');
+    if (nav && window.innerWidth <= 768) {
+        var toggleBtn = document.createElement('button');
+        toggleBtn.className = 'mobile-menu-toggle';
+        toggleBtn.innerHTML = '☰ Menu';
+        toggleBtn.style.cssText = `
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: #1e3799;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        `;
+        
+        // Show toggle button on mobile
+        if (window.innerWidth <= 768) {
+            toggleBtn.style.display = 'block';
+        }
+        
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                toggleBtn.style.display = 'block';
+            } else {
+                toggleBtn.style.display = 'none';
+            }
+        });
+        
+        document.body.appendChild(toggleBtn);
+        
+        toggleBtn.addEventListener('click', function() {
+            nav.style.display = nav.style.display === 'none' ? 'flex' : 'none';
+        });
+    }
+}
+
+function addPullToRefresh() {
+    // Add pull-to-refresh for search results
+    var searchResults = document.getElementById('search-results');
+    if (searchResults) {
+        var startY = 0;
+        var scrollTop = 0;
+        
+        searchResults.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].pageY;
+            scrollTop = this.scrollTop;
+        }, { passive: true });
+        
+        searchResults.addEventListener('touchmove', function(e) {
+            if (this.scrollTop <= 0) {
+                var currentY = e.touches[0].pageY;
+                var diff = currentY - startY;
+                if (diff > 0) {
+                    e.preventDefault();
+                    this.style.transform = 'translateY(' + (diff / 3) + 'px)';
+                }
+            }
+        }, { passive: false });
+        
+        searchResults.addEventListener('touchend', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    }
+}
+
+function addSwipeGestures() {
+    // Add swipe gestures for image gallery
+    var galleryMain = document.querySelector('.gallery-main');
+    if (galleryMain) {
+        var startX = 0;
+        
+        galleryMain.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].pageX;
+        }, { passive: true });
+        
+        galleryMain.addEventListener('touchend', function(e) {
+            var endX = e.changedTouches[0].pageX;
+            var diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    // Swipe left - next image
+                    changeImage(1);
+                } else {
+                    // Swipe right - previous image
+                    changeImage(-1);
+                }
+            }
+        }, { passive: true });
+    }
+}
+
+function addKeyboardHandling() {
+    // Handle mobile keyboard showing/hiding
+    var initialViewportHeight = window.innerHeight;
+    
+    window.addEventListener('resize', function() {
+        var currentViewportHeight = window.innerHeight;
+        var heightDiff = initialViewportHeight - currentViewportHeight;
+        
+        // If keyboard is likely open (viewport shrunk significantly)
+        if (heightDiff > 150) {
+            // Adjust modal positioning if open
+            var modal = document.getElementById('detail-modal');
+            if (modal && modal.style.display === 'flex') {
+                var modalContent = modal.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.style.marginTop = '10px';
+                }
+            }
+        } else {
+            // Keyboard closed
+            var modal = document.getElementById('detail-modal');
+            if (modal && modal.style.display === 'flex') {
+                var modalContent = modal.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.style.marginTop = '30px';
+                }
+            }
+        }
+    });
+}
+
+// Add mobile-friendly utility functions
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+    }).format(amount);
+}
+
+function formatNumber(num) {
+    if (num >= 10000000) {
+        return (num / 10000000).toFixed(1) + ' Cr';
+    } else if (num >= 100000) {
+        return (num / 100000).toFixed(1) + ' L';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + ' K';
+    }
+    return num.toString();
+}
+
+// Update card price display for better mobile readability
+function updateCardPrices() {
+    document.querySelectorAll('.card').forEach(function(card) {
+        var priceEl = card.querySelector('.price');
+        var marketEl = card.querySelector('p');
+        var sqftEl = card.querySelector('.sqft');
+        var ppsqftEl = card.querySelector('.price-per-sqft');
+        
+        if (priceEl) {
+            var priceText = priceEl.textContent;
+            if (priceText.includes('₹')) {
+                var priceNum = parseInt(priceText.replace(/[^\d]/g, ''));
+                priceEl.textContent = 'Bank Price: ' + formatNumber(priceNum);
+            }
+        }
+        
+        if (marketEl && marketEl.textContent.includes('Market Value:')) {
+            var marketText = marketEl.textContent;
+            var marketNum = parseInt(marketText.replace(/[^\d]/g, ''));
+            marketEl.textContent = 'Market Value: ' + formatNumber(marketNum);
+        }
+        
+        if (sqftEl) {
+            var sqftText = sqftEl.textContent;
+            if (sqftText.includes('Area:')) {
+                sqftEl.textContent = sqftText.replace('Area:', 'Area: ');
+            }
+        }
+        
+        if (ppsqftEl) {
+            var ppsqftText = ppsqftEl.textContent;
+            if (ppsqftText.includes('₹')) {
+                var ppsqftNum = parseInt(ppsqftText.replace(/[^\d]/g, ''));
+                ppsqftEl.textContent = '₹' + formatNumber(ppsqftNum) + ' / sq.ft';
+            }
+        }
+    });
+}
+
+// Call updateCardPrices after initCards
+function initCards() {
+    var propIdx = 0;
+    document.querySelectorAll('#properties .bank-group').forEach(function(group) {
+        var bankName = group.querySelector('.bank-header h3').textContent;
+        var code = bankCodes[bankName] || "BANK";
+        var color = bankColors[code] || "333333";
+        group.querySelectorAll('.card').forEach(function(card, i) {
+            var title = card.querySelector('h3').textContent;
+            var shortTitle = title.replace(/\s+/g, '+');
+            var imgs = propImgViews.map(function(v){ return "https://placehold.co/600x400/"+color+"/white?text="+shortTitle+"+"+v; });
+            card.setAttribute('data-images', imgs.join('|'));
+            card.setAttribute('data-bank', bankName);
+            card.setAttribute('data-auction-id', 'AUC-'+code+'-2025-'+ String(propIdx+1).padStart(3,'0'));
+            card.setAttribute('data-listed', listDates[i % listDates.length]);
+            card.setAttribute('data-highlights', propHighlights[propIdx % propHighlights.length].join('|'));
+            card.setAttribute('data-category', 'property');
+            card.setAttribute('onclick', 'openDetail(this)');
+            var btn = card.querySelector('button');
+            btn.setAttribute('onclick', 'event.stopPropagation(); openDetail(this.closest(".card"))');
+            propIdx++;
+        });
+    });
+
+    var vehIdx = 0;
+    document.querySelectorAll('#vehicles .bank-group').forEach(function(group) {
+        var bankName = group.querySelector('.bank-header h3').textContent;
+        var code = bankCodes[bankName] || "BANK";
+        var color = bankColors[code] || "333333";
+        group.querySelectorAll('.card').forEach(function(card, i) {
+            var title = card.querySelector('h3').textContent;
+            var shortTitle = title.replace(/\s+/g, '+');
+            var imgs = vehImgViews.map(function(v){ return "https://placehold.co/600x400/"+color+"/white?text="+shortTitle+"+"+v; });
+            card.setAttribute('data-images', imgs.join('|'));
+            card.setAttribute('data-bank', bankName);
+            card.setAttribute('data-auction-id', 'AUC-'+code+'-2026-V'+ String(vehIdx+1).padStart(3,'0'));
+            card.setAttribute('data-listed', listDates[(i+3) % listDates.length]);
+            card.setAttribute('data-highlights', vehHighlights[vehIdx % vehHighlights.length].join('|'));
+            card.setAttribute('data-category', 'vehicle');
+            card.setAttribute('onclick', 'openDetail(this)');
+            var btn = card.querySelector('button');
+            btn.setAttribute('onclick', 'event.stopPropagation(); openDetail(this.closest(".card"))');
+            vehIdx++;
+        });
+    });
+    
+    // Update card prices for mobile readability
+    updateCardPrices();
+}
+
+/* ========== LOGIN & PROFILE SYSTEM ========== */
+var API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000' : window.location.origin;
+var loginMethod = 'email';
+var loginIdentifier = '';
+
+function getAllProfiles() {
+    return JSON.parse(localStorage.getItem('bankersSaleProfiles') || '{}');
+}
+function saveAllProfiles(profiles) {
+    localStorage.setItem('bankersSaleProfiles', JSON.stringify(profiles));
+}
+function getProfile(id) {
+    return getAllProfiles()[id] || null;
+}
+
+function checkSession() {
+    var user = sessionStorage.getItem('loggedInUser');
+    if (user) {
+        var data = JSON.parse(user);
+        showMainSite(data.id, data.method);
+    }
+}
+
+function switchLoginTab(method) {
+    loginMethod = method;
+    document.querySelectorAll('.login-tab').forEach(function(t){ t.classList.remove('active-tab'); });
+    if (method === 'email') {
+        document.querySelectorAll('.login-tab')[0].classList.add('active-tab');
+        document.getElementById('login-email-form').style.display = 'block';
+        document.getElementById('login-phone-form').style.display = 'none';
+    } else {
+        document.querySelectorAll('.login-tab')[1].classList.add('active-tab');
+        document.getElementById('login-email-form').style.display = 'none';
+        document.getElementById('login-phone-form').style.display = 'block';
+    }
+    document.getElementById('login-error').textContent = '';
+}
+
+function generateVirtualOTP() {
+    var errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+    if (loginMethod === 'email') {
+        var email = document.getElementById('login-email').value.trim();
+        if (!email) { errEl.textContent = 'Please enter your email address.'; return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
+        loginIdentifier = email;
+    } else {
+        var phone = document.getElementById('login-phone').value.trim();
+        if (!phone) { errEl.textContent = 'Please enter your phone number.'; return; }
+        if (!/^\d{10}$/.test(phone)) { errEl.textContent = 'Please enter a valid 10-digit mobile number.'; return; }
+        loginIdentifier = '+91 ' + phone;
+    }
+
+    var sendBtn = document.querySelector('#login-step1 .login-btn');
+    sendBtn.textContent = 'Generating OTP...';
+    sendBtn.disabled = true;
+
+    // Generate virtual OTP
+    var generatedOTP = String(Math.floor(100000 + Math.random() * 900000));
+    
+    setTimeout(function() {
+        sendBtn.textContent = 'Generate OTP & Sign In';
+        sendBtn.disabled = false;
+        document.getElementById('otp-sent-to').textContent = loginIdentifier;
+        document.getElementById('virtual-otp').textContent = generatedOTP;
+        // Show OTP step
+        document.querySelectorAll('.login-step').forEach(function(s){ s.classList.remove('active-step'); });
+        document.getElementById('login-step2').classList.add('active-step');
+    }, 1000);
+}
+
+function verifyVirtualOTP() {
+    var errEl = document.getElementById('otp-error');
+    errEl.textContent = '';
+    
+    var verifyBtn = document.querySelector('#login-step2 .login-btn');
+    verifyBtn.textContent = 'Verifying...';
+    verifyBtn.disabled = true;
+
+    setTimeout(function() {
+        verifyBtn.textContent = 'Complete Sign In';
+        verifyBtn.disabled = false;
+        
+        var existing = getProfile(loginIdentifier);
+        if (existing) {
+            document.getElementById('welcome-name').textContent = existing.name;
+            // Show welcome step
+            document.querySelectorAll('.login-step').forEach(function(s){ s.classList.remove('active-step'); });
+            document.getElementById('login-step4').classList.add('active-step');
+        } else {
+            // Show profile step
+            document.querySelectorAll('.login-step').forEach(function(s){ s.classList.remove('active-step'); });
+            document.getElementById('login-step3').classList.add('active-step');
+        }
+    }, 1000);
+}
+
+function saveProfile() {
+    var name = document.getElementById('signup-name').value.trim();
+    var city = document.getElementById('signup-city').value.trim();
+    var state = document.getElementById('signup-state').value;
+    var errEl = document.getElementById('signup-error');
+    errEl.textContent = '';
+    if (!name) { errEl.textContent = 'Please enter your full name.'; return; }
+    if (!city) { errEl.textContent = 'Please enter your city.'; return; }
+    if (!state) { errEl.textContent = 'Please select your state.'; return; }
+
+    var profile = {
+        name: name,
+        dob: document.getElementById('signup-dob').value,
+        gender: document.getElementById('signup-gender').value,
+        address: document.getElementById('signup-address').value.trim(),
+        city: city,
+        state: state,
+        pincode: document.getElementById('signup-pincode').value.trim(),
+        contact: loginIdentifier,
+        method: loginMethod,
+        joinedOn: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    };
+
+    var profiles = getAllProfiles();
+    profiles[loginIdentifier] = profile;
+    saveAllProfiles(profiles);
+
+    sessionStorage.setItem('loggedInUser', JSON.stringify({ id: loginIdentifier, method: loginMethod }));
+    showMainSite(loginIdentifier, loginMethod);
+}
+
+function enterSite() {
+    sessionStorage.setItem('loggedInUser', JSON.stringify({ id: loginIdentifier, method: loginMethod }));
+    showMainSite(loginIdentifier, loginMethod);
+}
+
+function showMainSite(userId, method) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-site').style.display = 'block';
+    var profile = getProfile(userId);
+    var nameEl = document.getElementById('nav-profile-name');
+    if (profile) {
+        nameEl.textContent = profile.name.split(' ')[0];
+    } else {
+        nameEl.textContent = '';
+    }
+}
+
+function loadProfilePage() {
+    var user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    if (!user) return;
+    var profile = getProfile(user.id);
+    if (profile) {
+        document.getElementById('profile-page-name').textContent = profile.name;
+        document.getElementById('profile-page-since').textContent = 'Member since ' + profile.joinedOn;
+        document.getElementById('profile-page-contact').textContent = (user.method === 'email' ? '📧 ' : '📱 ') + user.id;
+        document.getElementById('pp-dob').textContent = profile.dob || 'Not set';
+        document.getElementById('pp-gender').textContent = profile.gender || 'Not set';
+        document.getElementById('pp-address').textContent = profile.address || 'Not set';
+        document.getElementById('pp-city').textContent = profile.city;
+        document.getElementById('pp-state').textContent = profile.state;
+        document.getElementById('pp-pincode').textContent = profile.pincode || 'Not set';
+    } else {
+        document.getElementById('profile-page-name').textContent = 'User';
+        document.getElementById('profile-page-contact').textContent = (user.method === 'email' ? '📧 ' : '📱 ') + user.id;
+    }
+}
+
+function logOut() {
+    sessionStorage.removeItem('loggedInUser');
+    document.getElementById('main-site').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-phone').value = '';
+    document.querySelectorAll('.otp-box').forEach(function(b){ b.value = ''; });
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('otp-error').textContent = '';
+    // Show login step 1
+    document.querySelectorAll('.login-step').forEach(function(s){ s.classList.remove('active-step'); });
+    document.getElementById('login-step1').classList.add('active-step');
+}
+
+
+
+
+/* ========== PROFILE VIEW & EDIT ========== */
+function openProfileModal() {
+    document.getElementById('user-menu').classList.remove('show');
+    var user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    var profile = getProfile(user.id);
+    if (!profile) { alert('No profile found. Please edit your profile.'); return; }
+    document.getElementById('profile-modal-name').textContent = profile.name;
+    document.getElementById('profile-modal-since').textContent = 'Member since ' + profile.joinedOn;
+    document.getElementById('profile-contact').textContent = profile.contact;
+    document.getElementById('profile-dob').textContent = profile.dob || 'Not set';
+    document.getElementById('profile-gender').textContent = profile.gender || 'Not set';
+    document.getElementById('profile-address').textContent = profile.address || 'Not set';
+    document.getElementById('profile-city').textContent = profile.city;
+    document.getElementById('profile-state').textContent = profile.state;
+    document.getElementById('profile-pincode').textContent = profile.pincode || 'Not set';
+    document.getElementById('profile-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProfileModal() {
+    document.getElementById('profile-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function openEditProfile() {
+    document.getElementById('user-menu').classList.remove('show');
+    var user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    var profile = getProfile(user.id);
+    if (profile) {
+        document.getElementById('edit-name').value = profile.name || '';
+        document.getElementById('edit-dob').value = profile.dob || '';
+        document.getElementById('edit-gender').value = profile.gender || '';
+        document.getElementById('edit-address').value = profile.address || '';
+        document.getElementById('edit-city').value = profile.city || '';
+        document.getElementById('edit-state').value = profile.state || '';
+        document.getElementById('edit-pincode').value = profile.pincode || '';
+    }
+    document.getElementById('edit-profile-error').textContent = '';
+    document.getElementById('edit-profile-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditProfile() {
+    document.getElementById('edit-profile-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function showLoginStep(step) {
+    document.querySelectorAll('.login-step').forEach(function(s){ s.classList.remove('active-step'); });
+    document.getElementById('login-step' + step).classList.add('active-step');
+}
+
+function updateProfile() {
+    var name = document.getElementById('edit-name').value.trim();
+    var city = document.getElementById('edit-city').value.trim();
+    var state = document.getElementById('edit-state').value;
+    var errEl = document.getElementById('edit-profile-error');
+    errEl.textContent = '';
+    if (!name) { errEl.textContent = 'Name is required.'; return; }
+    if (!city) { errEl.textContent = 'City is required.'; return; }
+    if (!state) { errEl.textContent = 'State is required.'; return; }
+
+    var user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+    var profiles = getAllProfiles();
+    var old = profiles[user.id] || {};
+    profiles[user.id] = {
+        name: name,
+        dob: document.getElementById('edit-dob').value,
+        gender: document.getElementById('edit-gender').value,
+        address: document.getElementById('edit-address').value.trim(),
+        city: city,
+        state: state,
+        pincode: document.getElementById('edit-pincode').value.trim(),
+        contact: user.id,
+        method: user.method,
+        joinedOn: old.joinedOn || new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    };
+    saveAllProfiles(profiles);
+    showMainSite(user.id, user.method);
+    loadProfilePage();
+    closeEditProfile();
+    alert('Profile updated successfully!');
+}
+</script>
+
+</body>
+</html>
