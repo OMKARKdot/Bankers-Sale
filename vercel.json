@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "name": "bankers-sale"
+  "name": "bankers-sale",
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "framework": null
 }
